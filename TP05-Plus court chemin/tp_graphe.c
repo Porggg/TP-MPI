@@ -71,17 +71,91 @@ void free_graphe(graphe G){
 /* Partie 2 */
 
 void distances(graphe G, int s, float* dist, int* pred){
-  /* TODO */
+  dist[s] = 0;
+  pred[s] = s;
+  file* f = creer_file();
+  file_push(f,s);
+  // Initialisation de deja_vu
+  bool* deja_vu = (bool*)malloc(G.nb_sommets * sizeof(bool));
+  for (int i = 0; i < G.nb_sommets; i++)
+  {
+    deja_vu[i] = false;
+  }
+  deja_vu[s] = true;
+  while (!file_est_vide(f))
+  {
+    int u = file_pop(f);
+    arc* voisin = G.voisins[u];
+    while (voisin != NULL)
+    {
+      int v = voisin->sommet;
+      if (!deja_vu[v])
+      {
+        deja_vu[v] = true;
+        file_push(f,v);
+        dist[v] = dist[u] + 1;
+        pred[v] = u;
+      }
+      voisin = voisin->next;
+    }
+  }
+  free(deja_vu);
+  free_file(f);
 }
 
 void chemin(int s, int t, int* pred){
-  /* TODO */
+  if (pred[t] == -1)
+  {
+    printf("pas de chemin\n");
+    return;
+  }
+  printf("%d ",t);
+  int current = t;
+  while (current != s)
+  {
+    current = pred[current];
+    printf("<- %d ", current);
+  }
+  printf("\n");
 }
 
 /* Partie 3 */
 
 void dijkstra(graphe G, int s, float* dist, int* pred){
-  /* TODO */
+  dist[s] = 0;
+  pred[s] = s;
+  tasmin* tas = creer_tasmin();
+  tasmin_push(tas,s,dist[s]);
+  // Initialisation de deja_vu
+  bool* deja_vu = (bool*)malloc(G.nb_sommets * sizeof(bool));
+  for (int i = 0; i < G.nb_sommets; i++)
+  {
+    deja_vu[i] = false;
+  }
+  while (!tasmin_est_vide(tas))
+  {
+    int u = tasmin_pop(tas);
+    if (deja_vu[u]) { continue; }
+    arc* voisin = G.voisins[u];
+    while (voisin != NULL)
+    {
+      int v = voisin->sommet;
+      float w = voisin->poids;
+      if (dist[v] > dist[u] + w)
+      {
+        dist[v] = dist[u] + w;
+        pred[v] = u;
+        if (!deja_vu[v])
+        {
+          tasmin_push(tas,v,dist[v]);
+        }
+      }
+      voisin = voisin->next;
+    }
+    deja_vu[u] = true;
+  }
+  free(deja_vu);
+  free_tasmin(tas);
 }
 
 /* Partie 4 */
@@ -93,7 +167,7 @@ struct coord{
 typedef struct coord coord;
 
 float h(coord* pos, int i, int j){
-  /* TODO */
+  
   return 0;
 }
 
