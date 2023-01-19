@@ -1,0 +1,29 @@
+# Q1
+grep '^0[^01]\|^1[01]*' binaire.txt
+
+# Q2
+grep -v '^0[^1]\|^1[01]*' binaire.txt
+
+# Q3
+grep -o '\([^0-9_]\|^\)[a-zA-Z][a-zA-Z0-9_]*' area.c | grep -o '[a-zA-Z][a-zA-Z0-9_]*'
+
+# Q4
+grep -v '//' area.c | grep -o '\([^0-9_]\|^\)[a-zA-Z][a-zA-Z0-9_]*' | grep -o '[a-zA-Z0-9_]*'
+
+# Q5
+grep -v '//' area.c | grep -o '\([^0-9_]\|^\)[a-zA-Z][a-zA-Z0-9_]*' | grep -o '[a-zA-Z0-9_]*' | grep -v 'if\|return\|for\|while\|double'
+
+# Q6
+grep -o '\-\?[0-9]\+\(\.[0-9]*\)\?\([eE]-\?[0-9]\+\)\?' area.c
+
+# Q7
+grep '[a-z0-9_\.]\+@[a-z0-9\-]\+\.\(com\|fr\|net\)' mail.csv
+
+# Q8
+grep -c '[a-z0-9_\.]\+@[a-z0-9\-]\+\.\(com\|fr\|net\)' mail.csv
+
+# Q9
+grep '^\([a-z]*\);\([a-z]*\);\1\.\2@\([a-z]\|-\)*\.\(com\|fr\|net\)' mail.csv
+
+# Q10
+grep -c '^\([a-z]*\);\([a-z]*\);\1\.\2@\([a-z]\|-\)*\.\(com\|fr\|net\)' mail.csv
