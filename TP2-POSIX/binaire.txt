@@ -1,0 +1,10 @@
+0 il faut trouver cette ligne
+101
+1101
+101011011
+1100101
+01101011 il ne faut pas trouver cette ligne !
+1001101
+Il ne faut pas trouver cette ligne 101010 !
+1001110
+10011010
