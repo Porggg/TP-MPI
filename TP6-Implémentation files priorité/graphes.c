@@ -1,9 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
-// #include <math.h> // utile pour A*
-// #include "file.h" // utile pour le parcours en largeur
-// #include "tasmin.h" // utile pour Dijkstra et A*
+#include <math.h>
+#include "file.h"
+#include "tasmin.h"
 
 struct arc {
   int sommet; // sommet d'arrivée
@@ -18,63 +18,76 @@ struct graphe {
 };
 typedef struct graphe graphe;
 
-/* Partie 1 */
-
 graphe init_graphe(int n){
-  graphe g;
-  g.nb_sommets = n;
-  g.voisins = malloc(n*sizeof(arc*));
-    for(int i = 0; i <= n-1; i++){
-        g.voisins[i] = NULL;
-    }
-    return g;
+  graphe G;
+  G.nb_sommets = n;
+  G.voisins = (arc**)malloc(n * sizeof(arc*));
+  for (int s = 0; s < n; s++)
+  {
+    G.voisins[s] = NULL;
+  }
+  return G;
 }
 
 float poids(graphe G, int s, int t){
   arc* voisin = G.voisins[s];
-  while (voisin != NULL){
-    if(voisin->sommet == t){return voisin->poids;}
-    else{voisin = voisin->next;}
+  while (voisin != NULL)
+  {
+    if (voisin->sommet == t)
+    {
+      return voisin->poids;
+    }
+    voisin = voisin->next;
   }
   return -1;
 }
 
 void ajouter_arc(graphe G, int s, int t, float w){
-  if(poids(G,s,t) == -1){
-    arc* new = malloc(sizeof(arc));
-    new->poids = w;
-    new->sommet = t;
-    new->next = NULL;
-    if(G.voisins[s] == NULL){
-      G.voisins[s]=new;
+  if (G.voisins[s] == NULL)
+  {
+    G.voisins[s] = (arc*)malloc(sizeof(arc));
+    G.voisins[s]->sommet = t;
+    G.voisins[s]->poids = w;
+    G.voisins[s]->next = NULL;
+  }
+  else
+  {
+    arc* voisin = G.voisins[s];
+    while (voisin->next != NULL && voisin->sommet != t)
+    {
+      voisin = voisin->next;
     }
-    else{
-      new->next = G.voisins[s] ;
-      G.voisins[s] = new;
+    if (voisin->sommet != t)
+    {
+      voisin->next = (arc*)malloc(sizeof(arc));
+      voisin->next->sommet = t;
+      voisin->next->poids = w;
+      voisin->next->next = NULL;
     }
   }
 }
 
 void free_graphe(graphe G){
-  int n = G.nb_sommets;
-  for(int i=0;i<=n-1;i++){
-    arc* voisin = G.voisins[i];
-    while(voisin != NULL){
-      arc* v = voisin->next;
-
-      free(voisin);
-      voisin = v;
+  for (int s = 0; s < G.nb_sommets; s++)
+  {
+    // On libère la liste chaînée des voisins de s
+    arc* voisin = G.voisins[s];
+    while (voisin != NULL)
+    {
+      arc* old = voisin;
+      voisin = voisin->next;
+      free(old);
     }
   }
+  // On libère le tableau
+  free(G.voisins);
 }
-
-/* Partie 2 */
 
 void distances(graphe G, int s, float* dist, int* pred){
   dist[s] = 0;
   pred[s] = s;
-  file* f = creer_file();
-  file_push(f,s);
+  file* a_traiter = creer_file();
+  file_push(a_traiter,s);
   // Initialisation de deja_vu
   bool* deja_vu = (bool*)malloc(G.nb_sommets * sizeof(bool));
   for (int i = 0; i < G.nb_sommets; i++)
@@ -82,9 +95,9 @@ void distances(graphe G, int s, float* dist, int* pred){
     deja_vu[i] = false;
   }
   deja_vu[s] = true;
-  while (!file_est_vide(f))
+  while (!file_est_vide(a_traiter))
   {
-    int u = file_pop(f);
+    int u = file_pop(a_traiter);
     arc* voisin = G.voisins[u];
     while (voisin != NULL)
     {
@@ -92,7 +105,7 @@ void distances(graphe G, int s, float* dist, int* pred){
       if (!deja_vu[v])
       {
         deja_vu[v] = true;
-        file_push(f,v);
+        file_push(a_traiter,v);
         dist[v] = dist[u] + 1;
         pred[v] = u;
       }
@@ -100,7 +113,7 @@ void distances(graphe G, int s, float* dist, int* pred){
     }
   }
   free(deja_vu);
-  free_file(f);
+  free_file(a_traiter);
 }
 
 void chemin(int s, int t, int* pred){
@@ -118,8 +131,6 @@ void chemin(int s, int t, int* pred){
   }
   printf("\n");
 }
-
-/* Partie 3 */
 
 void dijkstra(graphe G, int s, float* dist, int* pred){
   dist[s] = 0;
@@ -158,8 +169,6 @@ void dijkstra(graphe G, int s, float* dist, int* pred){
   free_tasmin(tas);
 }
 
-/* Partie 4 */
-
 struct coord{
   float x;
   float y;
@@ -167,14 +176,50 @@ struct coord{
 typedef struct coord coord;
 
 float h(coord* pos, int i, int j){
-  
-  return 0;
+  float dx = pos[i].x - pos[j].x;
+  float dy = pos[i].y - pos[j].y;
+  return sqrt(dx*dx + dy*dy);
 }
 
 float astar(graphe G, int s, int t, coord* pos, float* dist, int* pred){
-  /* TODO */
+  dist[s] = 0;
+  pred[s] = s;
+  tasmin* tas = creer_tasmin();
+  tasmin_push(tas,s,dist[s]);
+  // Initialisation de deja_vu
+  bool* deja_vu = (bool*)malloc(G.nb_sommets * sizeof(bool));
+  for (int i = 0; i < G.nb_sommets; i++)
+  {
+    deja_vu[i] = false;
+  }
+  while (!tasmin_est_vide(tas))
+  {
+    int u = tasmin_pop(tas);
+    if (u == t) { return dist[t]; }
+    if (deja_vu[u]) { continue; }
+    arc* voisin = G.voisins[u];
+    while (voisin != NULL)
+    {
+      int v = voisin->sommet;
+      float w = voisin->poids;
+      if (dist[v] > dist[u] + w)
+      {
+        dist[v] = dist[u] + w;
+        pred[v] = u;
+        if (!deja_vu[v])
+        {
+          tasmin_push(tas, v, dist[v] + h(pos,v,t));
+        }
+      }
+      voisin = voisin->next;
+    }
+    deja_vu[u] = true;
+  }
+  free(deja_vu);
+  free_tasmin(tas);
   return -1;
 }
+
 
 int main(){
   graphe G = init_graphe(5);
@@ -195,7 +240,6 @@ int main(){
   printf("L'arc 4->2 vaut : %f\n", poids(G,4,2));
   printf("L'arc 2->4 n'existe pas : %f\n", poids(G,2,4));
 
-  /* Déplacer cette ligne à la fin des tests souhaités
   // Test parcours en largeur
   printf("\nTest parcours en largeur\n");
   float dist[5] = {-1, -1, -1, -1, -1};
@@ -204,6 +248,7 @@ int main(){
   printf("distance 0--3 : %f\n", dist[3]);
   chemin(0,3,pred);
 
+  /* Déplacer cette ligne à la fin des tests souhaités
   // Test Dijkstra
   printf("\nTest Dijkstra\n");
   // On réinitialise dist et pred

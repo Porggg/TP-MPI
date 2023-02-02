@@ -1,4 +1,3 @@
- 
 (* Automates dÃ©terministes *)
 
 type (' a, ' b) afd = {
