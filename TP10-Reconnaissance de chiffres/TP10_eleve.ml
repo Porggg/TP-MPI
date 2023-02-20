@@ -173,8 +173,10 @@ let construire_modele dist k donnees =
 ;;
 
 (* Question 10 *)
-
 let determiner_classe m im =
+  0
+  ;;
+(*let determiner_classe m im =
   let n = Array.length m.donnees in
   let tas = TasMax.creer (0,0.) in
   for i = 0 to m.k-1 do
@@ -197,6 +199,7 @@ let determiner_classe m im =
     | _ -> (TasMax.pop tas) :: creer_liste (k-1)
   in classe_plus_frequente (creer_liste m.k)
 ;;
+*)
 
 (* Question 11 *)
 
