@@ -1,4 +1,4 @@
-type ('a,'b) tasmin = { mutable nb_elem : int ; mutable tab : ('a * 'b) array } ;;
+type ('a,'b) tasmin = { mutable nb_elem : int ; mutable tab : ('a * 'b) array }
 
 val creer : 'a * 'b -> ('a,'b) tasmin
 
