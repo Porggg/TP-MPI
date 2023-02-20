@@ -14,4 +14,3 @@ let fsat3 = [(Xb 0, X 1); (X 1, X 2); (Xb 1, Xb 2); (X 0, X 2); (X 0, Xb 2)] ;; 
 let fnsat3 = [(X 0, X 1); (Xb 0, X 2); (X 0, Xb 1); (Xb 1, X 2); (Xb 0, Xb 2)] ;; (* une formule a 3 variables non satisfiable *)
 let fsat5 = [(X 2, X 4); (X 1, Xb 2); (X 0, Xb 3); (X 2, X 3); (Xb 3, X 4); (Xb 1, Xb 2); (X 1, X 4); (Xb 0, Xb 2); (Xb 0, X 3); (X 1, X 2); (X 1, X 3); (Xb 2, X 4); (X 0, Xb 4); (X 1, Xb 3); (Xb 1, X 3)] ;; (* une formule a 5 variables satisfiable *)
 let fnsat5 = [(Xb 2, X 4); (X 1, Xb 2); (Xb 3, Xb 4); (Xb 0, Xb 3); (Xb 0, X 1); (Xb 1, Xb 4); (Xb 0, Xb 1); (Xb 1, X 3); (Xb 1, X 4); (Xb 2, Xb 3); (X 1, X 4); (X 3, Xb 4); (X 0, X 1); (Xb 0, Xb 4); (Xb 2, Xb 4)] ;; (* une formule a 5 variables non satisfiable *)
-éé
