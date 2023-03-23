@@ -38,7 +38,13 @@ let union uf i j =
 Random.self_init () ;; (* initialise la seed du module Random *)
 
 let melange_knuth tab =
-  () (* TODO *)
+  let n = Array.length tab in 
+  for i = 0 to n-1 do 
+    let j = Random.int (i+1) in
+    let c = tab.(j) in
+    tab.(j) <- tab.(i) ;
+    tab.(i) <- c ;
+  done;
 ;;
 
 let tab = Array.init 10 (fun i -> i) in
